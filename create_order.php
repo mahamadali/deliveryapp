@@ -8,6 +8,8 @@
 		$message = json_encode(array('text' => 'Order with '.$orderInfo->order_no.' has been successuly created.','icon' => 'fa-check','type' => 'success'));
 		$app->setSession('message',$message);
 	}
+	$deliveryboy_details = get_deliveryboy_details(false,NULL,NULL,'');
+	dd($deliveryboy_details);
 ?>
 	<div class="content">
 		<div class="container-fluid">
