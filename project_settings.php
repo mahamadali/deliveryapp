@@ -4,7 +4,7 @@
 	/* Project related settings */
 	define("BASE_PATH", dirname(__FILE__));
 	define("SITE_URL", 'index.php');
-	define("HOME_URL", 'http://localhost/deliveryboys/');
+	define("HOME_URL", 'http://localhost/deliveryapp/');
 	define("SITE_TITLE", "A2Z Delivery");
 	define('ORDER_NUMBER_PREFIX','ORDA2Z_');
 

@@ -56,6 +56,16 @@
 										</div>
 									</div>
 								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label>Select Delivery Boy</label>
+											<select class="form-control" name="delivery_boy" required="">
+												<option value="">Select Delivery Boy</option>
+											</select>
+										</div>
+									</div>
+								</div>
 								<table class="table table-striped orderTable">
 									<caption>Order Items</caption>
 									<tr class="item-row">

@@ -1,16 +1,16 @@
 <?php
 require_once(BASE_PATH.'/common/database.php');
 require BASE_PATH . '/vendor/autoload.php';
-require_once BASE_PATH.'/libs/html2pdf/vendor/autoload.php';
+// require_once BASE_PATH.'/libs/html2pdf/vendor/autoload.php';
 
 // Use the REST API Client to make requests to the Twilio REST API
 use Twilio\Rest\Client;
 use Dompdf\Dompdf;
 
 // Use HTML2PDF LIBRARY
-use Spipu\Html2Pdf\Html2Pdf;
-use Spipu\Html2Pdf\Exception\Html2PdfException;
-use Spipu\Html2Pdf\Exception\ExceptionFormatter;
+// use Spipu\Html2Pdf\Html2Pdf;
+// use Spipu\Html2Pdf\Exception\Html2PdfException;
+// use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 
 
 
@@ -226,7 +226,7 @@ function generateOrderNumber() {
 /* Function to generate order invoice */
 function generateOrderInvoice($order_id, $order_no) {
 	$orderInfo = getOrderInfo($order_id);
-	$order_invoice_tempalte = file_get_contents('http://localhost/deliveryboys/order_invoice_tpl.php?order_id='.$order_id);
+	$order_invoice_tempalte = file_get_contents(HOME_URL.'order_invoice_tpl.php?order_id='.$order_id);
 	$order_invoice_built_content = buildOrderInvoiceInfo($order_invoice_tempalte,$orderInfo);
 	$orderInvoicePDFFileName = "assets/order_invoice_pdfs/".$order_no.".pdf";
 	generateOrderInvoicePDF($order_invoice_built_content,$orderInvoicePDFFileName);
