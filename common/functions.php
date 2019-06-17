@@ -155,6 +155,7 @@ function getDeliveryBoyInfo($delivery_boy_id) {
 /* Function to create order */
 function generateOrder($orderInfo) {
 	global $db,$app;
+
 	//Get latlong
 	$latlongFrom = getLatLong($orderInfo['order_from']);
 	$latlongTo = getLatLong($orderInfo['order_to']);
@@ -183,6 +184,7 @@ function generateOrder($orderInfo) {
 	$order_to = $db->realEscape($orderInfo['order_to']);
 	$orderSpecialNote = $db->realEscape($orderInfo['orderSpecialNote']);
 	$delivery_boy = $db->realEscape($orderInfo['delivery_boy']);
+	
 
 	$orderItemNames = $db->realEscapeRequest($orderInfo['orderItemName']);
 	$orderItemQuantities = $db->realEscapeRequest($orderInfo['orderItemQuantity']);
@@ -200,6 +202,20 @@ function generateOrder($orderInfo) {
 	$db->query($sql);
 	$orderInfo = getOrderInfo($latest_order_id);
 	generateOrderInvoice($latest_order_id, $order_no);
+
+	//Send Notification to delivery boy
+	$deliveryBoyInfo = getDeliveryBoyInfo($delivery_boy);
+	$deliveryBoyName = $deliveryBoyInfo->name;
+	$mobileNo = $deliveryBoyInfo->contact;
+	$orderInvoicePDFFileName = "assets/order_invoice_pdfs/".$order_no.".pdf";
+
+	$msg = "Hello ".ucfirst($deliveryBoyName).PHP_EOL.PHP_EOL;
+	$msg .= "New order arrived from A2Z Delivery.".PHP_EOL.PHP_EOL;
+	$msg .= "Click here to check order details. ".HOME_URL.$orderInvoicePDFFileName.PHP_EOL.PHP_EOL;
+	$msg .= "Thanks,".PHP_EOL." A2Z Delivery Team.";
+
+	sendNotificationToDeliveryBoy($mobileNo, $msg);
+
 	SystemLog($app->getSession('loggedin'), $latest_order_id, "Order No #".$order_no." created.");
 	return $orderInfo;
 }
@@ -582,5 +598,24 @@ function SystemLog($userId,$orderId,$msg) {
 	global $db,$app;
 	$sql = "INSERT INTO `deliveryboys_logs` (userid,orderid,message) VALUES (".$userId.", ".$orderId.", '".$msg."')";
 	$db->query($sql);
+}
+
+/* Send Notification */
+function sendNotificationToDeliveryBoy($phone_number,$msg) {
+	$invite_sms_text = $msg;
+	$phone_number = str_replace(" ","",$phone_number);
+	$sid = get_setting_meta('twilio_key');
+	$token = get_setting_meta('twilio_secret');
+	$client = new Client($sid, $token);
+	try {
+		$client->messages->create("+91".$phone_number, array(
+			'from' => get_setting_meta('twilio_number'),
+			'body' => $invite_sms_text
+		));
+		return true;
+	}
+	catch(Exception $e) {
+		return false;
+	}
 }
 ?>
