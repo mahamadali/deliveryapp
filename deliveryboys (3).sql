@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jun 17, 2019 at 07:28 AM
+-- Generation Time: Jun 17, 2019 at 08:30 AM
 -- Server version: 5.7.23
 -- PHP Version: 7.2.10
 
@@ -131,6 +131,31 @@ INSERT INTO `deliveryboys` (`id`, `name`, `contact`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `deliveryboys_logs`
+--
+
+DROP TABLE IF EXISTS `deliveryboys_logs`;
+CREATE TABLE IF NOT EXISTS `deliveryboys_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userid` int(11) NOT NULL,
+  `orderid` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `deliveryboys_logs`
+--
+
+INSERT INTO `deliveryboys_logs` (`id`, `userid`, `orderid`, `message`, `created_at`) VALUES
+(1, 3, 22, 'Order status changed to D.', '2019-06-17 13:19:43'),
+(2, 1, 0, 'New Delivery Boy Added.', '2019-06-17 13:22:16'),
+(3, 1, 24, 'Order No #ORDA2Z_00000024 created.', '2019-06-17 13:25:18');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orders`
 --
 
@@ -148,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `customer_phone_number` varchar(30) NOT NULL,
   `deliveryboy_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `orders`
@@ -176,7 +201,9 @@ INSERT INTO `orders` (`id`, `order_from`, `order_to`, `bill_to`, `order_no`, `cr
 (19, 'Devpura, Gujarat, India', 'Kirtistambh Circle, Chaman Bagh, Palanpur, Gujarat, India', 'MD', 'ORDA2Z_00000019', '2019-06-17 10:08:39', 'P', 330.57, 'Special test note', '9865324578', 4),
 (20, 'Devpura, Gujarat, India', 'Kirtistambh Circle, Chaman Bagh, Palanpur, Gujarat, India', 'MD', 'ORDA2Z_00000020', '2019-06-17 10:10:52', 'P', 330.57, 'Special test note', '9865324578', 4),
 (21, 'Devpura, Gujarat, India', 'Kirtistambh Circle, Chaman Bagh, Palanpur, Gujarat, India', 'MD', 'ORDA2Z_00000021', '2019-06-17 10:11:19', 'P', 330.57, 'Special test note', '9865324578', 4),
-(22, 'Deesa, Gujarat, India', 'Palanpur, Gujarat, India', 'Ak', 'ORDA2Z_00000022', '2019-06-17 12:31:33', 'P', 78.3, 'test note', '8530706924', 3);
+(22, 'Deesa, Gujarat, India', 'Palanpur, Gujarat, India', 'Ak', 'ORDA2Z_00000022', '2019-06-17 12:31:33', 'D', 78.3, 'test note', '8530706924', 3),
+(23, 'Ahmednagar, Maharashtra, India', 'Porbandar, Gujarat, India', 'MD', 'ORDA2Z_00000023', '2019-06-17 13:24:24', 'P', 1811.94, 'test note', '9898989898', 4),
+(24, 'Ahmednagar, Maharashtra, India', 'Porbandar, Gujarat, India', 'MD', 'ORDA2Z_00000024', '2019-06-17 13:25:18', 'P', 1811.94, 'test note', '9898989898', 4);
 
 -- --------------------------------------------------------
 
@@ -191,7 +218,7 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   `order_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `orde_id` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `order_items`
@@ -219,7 +246,9 @@ INSERT INTO `order_items` (`id`, `items`, `order_id`) VALUES
 (19, 'a:3:{s:4:\"item\";a:2:{i:0;s:8:\"stoberry\";i:1;s:5:\"Apple\";}s:3:\"qty\";a:2:{i:0;s:1:\"3\";i:1;s:1:\"4\";}s:4:\"note\";a:2:{i:0;s:5:\"Testy\";i:1;s:4:\"Nice\";}}', 19),
 (20, 'a:3:{s:4:\"item\";a:2:{i:0;s:8:\"stoberry\";i:1;s:5:\"Apple\";}s:3:\"qty\";a:2:{i:0;s:1:\"3\";i:1;s:1:\"4\";}s:4:\"note\";a:2:{i:0;s:5:\"Testy\";i:1;s:4:\"Nice\";}}', 20),
 (21, 'a:3:{s:4:\"item\";a:2:{i:0;s:8:\"stoberry\";i:1;s:5:\"Apple\";}s:3:\"qty\";a:2:{i:0;s:1:\"3\";i:1;s:1:\"4\";}s:4:\"note\";a:2:{i:0;s:5:\"Testy\";i:1;s:4:\"Nice\";}}', 21),
-(22, 'a:3:{s:4:\"item\";a:2:{i:0;s:8:\"stoberry\";i:1;s:5:\"Apple\";}s:3:\"qty\";a:2:{i:0;s:1:\"4\";i:1;s:1:\"5\";}s:4:\"note\";a:2:{i:0;s:6:\"test 3\";i:1;s:5:\"Testy\";}}', 22);
+(22, 'a:3:{s:4:\"item\";a:2:{i:0;s:8:\"stoberry\";i:1;s:5:\"Apple\";}s:3:\"qty\";a:2:{i:0;s:1:\"4\";i:1;s:1:\"5\";}s:4:\"note\";a:2:{i:0;s:6:\"test 3\";i:1;s:5:\"Testy\";}}', 22),
+(23, 'a:3:{s:4:\"item\";a:1:{i:0;s:8:\"stoberry\";}s:3:\"qty\";a:1:{i:0;s:1:\"3\";}s:4:\"note\";a:1:{i:0;s:5:\"testy\";}}', 23),
+(24, 'a:3:{s:4:\"item\";a:1:{i:0;s:8:\"stoberry\";}s:3:\"qty\";a:1:{i:0;s:1:\"3\";}s:4:\"note\";a:1:{i:0;s:5:\"testy\";}}', 24);
 
 -- --------------------------------------------------------
 
@@ -237,7 +266,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `type` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
@@ -245,7 +274,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `name`, `contact`, `type`, `created_at`) VALUES
 (1, 'admin@a2zdeliveryboys.in', 'e6869a201b61fbf015db8b616ca8864a', 'Admin', '', 1, '2019-02-14 05:32:50'),
-(3, 'akbarmaknojiya@gmail.com', '81196613eb5939db8c152c2b1b78afe4', 'Akbar Husen', '+918530706924', 2, '2019-06-17 06:44:20');
+(3, 'akbarmaknojiya@gmail.com', '81196613eb5939db8c152c2b1b78afe4', 'Akbar Husen', '+918530706924', 2, '2019-06-17 06:44:20'),
+(4, 'manknojiya121@gmail.com', '81196613eb5939db8c152c2b1b78afe4', 'Mahmad', '8238136154', 2, '2019-06-17 07:52:16');
 
 --
 -- Constraints for dumped tables
