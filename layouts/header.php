@@ -37,30 +37,35 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-                        <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('delivery_boys','add_delivery_boy','edit_delivery_boy'))) { echo "active"; } ?>">
-                            <a href="delivery_boys.php">
-                                <i class="fa fa-motorcycle"></i>
-                                <p>Delivery Boys</p>
-                            </a>
-                        </li>
-                        <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('create_order','edit_order','chat'))) { echo "active"; } ?>">
-                            <a href="create_order.php">
-                                <i class="fa fa-shopping-cart"></i>
-                                <p>Create Order</p>
-                            </a>
-                        </li>
+                        <?php if(getUserRole($app->getSession('loggedin')) == 'admin'): ?>
+                            <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('delivery_boys','add_delivery_boy','edit_delivery_boy'))) { echo "active"; } ?>">
+                                <a href="delivery_boys.php">
+                                    <i class="fa fa-motorcycle"></i>
+                                    <p>Delivery Boys</p>
+                                </a>
+                            </li>
+                        
+                            <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('create_order','edit_order','chat'))) { echo "active"; } ?>">
+                                <a href="create_order.php">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <p>Create Order</p>
+                                </a>
+                            </li>
+                        <?php endif ?>
                         <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('orders'))) { echo "active"; } ?>">
                             <a href="orders.php">
                                 <i class="fa fa-list"></i>
                                 <p>Orders</p>
                             </a>
                         </li>
-                        <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('app_settings'))) { echo "active"; } ?>">
-                            <a href="app_settings.php">
-                                <i class="ti-settings"></i>
-                                <p>App settings</p>
-                            </a>
-                        </li>
+                        <?php if(getUserRole($app->getSession('loggedin')) == 'admin'): ?>
+                            <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('app_settings'))) { echo "active"; } ?>">
+                                <a href="app_settings.php">
+                                    <i class="ti-settings"></i>
+                                    <p>App settings</p>
+                                </a>
+                            </li>
+                        <?php endif ?>
                     </ul>
                 </div>
             </div>

@@ -126,7 +126,7 @@ function addUser($request) {
 function addDeliveryBoy($request) {
 	global $db,$app;
 	$request = $db->realEscapeRequest($request);
-	$sql = "INSERT INTO `deliveryboys`(`name`,`contact`) VALUES('".$request['delivery_boy_name']."','".$request['delivery_boy_contact_number']."')";
+	$sql = "INSERT INTO `users`(`name`,`contact`,`username`,`password`,`type`) VALUES('".$request['delivery_boy_name']."','".$request['delivery_boy_contact_number']."','".$request['delivery_boy_email']."','".encrypt($request['delivery_boy_password'])."',2)";
 	$db->query($sql);
 	return true;
 }
@@ -134,7 +134,7 @@ function addDeliveryBoy($request) {
 function updateDeliveryBoy($request) {
 	global $db,$app;
 	$request = $db->realEscapeRequest($request);
-	$sql = "UPDATE `deliveryboys` SET `name`='".$request['delivery_boy_name']."',`contact`='".$request['delivery_boy_contact_number']."' WHERE id=".$request['id'];
+	$sql = "UPDATE `users` SET `name`='".$request['delivery_boy_name']."',`contact`='".$request['delivery_boy_contact_number']."' WHERE id=".$request['id'];
 	$db->query($sql);
 	return true;
 }
@@ -147,7 +147,7 @@ function deleteDeliveryBoys($delivery_boy_id){
 /* Function to get information of delivery boy*/
 function getDeliveryBoyInfo($delivery_boy_id) {
 	global $db;
-	$sql = "SELECT * FROM `deliveryboys` WHERE `id`=".$delivery_boy_id;
+	$sql = "SELECT * FROM `users` WHERE `id`=".$delivery_boy_id;
 	$deliverBoyInfo = $db->getOne($db->query($sql));
 	return $deliverBoyInfo;
 }
@@ -181,6 +181,7 @@ function generateOrder($orderInfo) {
 	$order_from = $db->realEscape($orderInfo['order_from']);
 	$order_to = $db->realEscape($orderInfo['order_to']);
 	$orderSpecialNote = $db->realEscape($orderInfo['orderSpecialNote']);
+	$delivery_boy = $db->realEscape($orderInfo['delivery_boy']);
 
 	$orderItemNames = $db->realEscapeRequest($orderInfo['orderItemName']);
 	$orderItemQuantities = $db->realEscapeRequest($orderInfo['orderItemQuantity']);
@@ -191,7 +192,7 @@ function generateOrder($orderInfo) {
 		'note' => $orderItemSpecialNotes,
 	);
 	$order_no = generateOrderNumber();
-	$sql = "INSERT INTO `orders`(`bill_to`,`customer_phone_number`,`order_from`,`order_to`,`order_no`,`delivery_charge`,`special_note`) VALUES ('".$bill_to."','".$customer_phone_number."','".$order_from."','".$order_to."','".$order_no."', ".$delivery_charge.", '".$orderSpecialNote."')";
+	$sql = "INSERT INTO `orders`(`bill_to`,`customer_phone_number`,`order_from`,`order_to`,`order_no`,`delivery_charge`,`special_note`,`deliveryboy_id`) VALUES ('".$bill_to."','".$customer_phone_number."','".$order_from."','".$order_to."','".$order_no."', ".$delivery_charge.", '".$orderSpecialNote."', '".$delivery_boy."')";
 	$db->query($sql);
 	$latest_order_id = $db->getLastInsertedId();
 	$sql = "INSERT INTO `order_items`(`items`,`order_id`) VALUES('".serialize($orderItemsSet)."','".$latest_order_id."')";
@@ -206,6 +207,17 @@ function getOrderInfo($order_id = null) {
 	$orderInfo = array();
 	if(!empty($order_id)) {
 		$sql = "SELECT * FROM `orders` o LEFT JOIN `order_items` oi ON oi.order_id = o.id WHERE o.id = ".$order_id;
+		$orderInfo = $db->getOne($db->query($sql));
+	}
+	return $orderInfo;
+}
+
+/* Function to get order info by order id */
+function getOrderInfoByOrderNo($order_id = null) {
+	global $db,$app;
+	$orderInfo = array();
+	if(!empty($order_id)) {
+		$sql = "SELECT * FROM `orders` o LEFT JOIN `order_items` oi ON oi.order_id = o.id WHERE o.order_no = '".$order_id."'";
 		$orderInfo = $db->getOne($db->query($sql));
 	}
 	return $orderInfo;
@@ -234,7 +246,13 @@ function generateOrderInvoice($order_id, $order_no) {
 /* Functin to build order invoice infomation */
 function buildOrderInvoiceInfo($order_invoice_tempalte,$order_info){
 	foreach ($order_info as $key => $value) {
-		$order_invoice_tempalte = str_replace("{{".$key."}}", $value, $order_invoice_tempalte);
+		if($key == 'deliveryboy_id') {
+			$delivery_boy_name = getDeliveryBoyInfo($value);
+			$order_invoice_tempalte = str_replace("{{".$key."}}", $delivery_boy_name->name, $order_invoice_tempalte);
+		}
+		else{
+			$order_invoice_tempalte = str_replace("{{".$key."}}", $value, $order_invoice_tempalte);
+		}
 	}
 	$order_invoice_tempalte = str_replace("{{APP_LOGO}}","assets/img/logos/".get_setting_meta('logo'),$order_invoice_tempalte);
 	$order_invoice_tempalte = str_replace("{{APP_NAME}}",get_setting_meta('app_name'),$order_invoice_tempalte);
@@ -457,7 +475,11 @@ function getLatLong($address) {
 function getOrders() {
 	global $db,$app;
 	$orderInfo = array();
-	$sql = "SELECT * FROM `orders` o LEFT JOIN `order_items` oi ON oi.order_id = o.id ORDER BY o.id DESC";
+	$where = " WHERE 1=1";
+	if(getUserRole($app->getSession('loggedin')) == 'deliveryboy') {
+		$where = " WHERE deliveryboy_id=".$app->getSession('loggedin')."";
+	}
+	$sql = "SELECT * FROM `orders` o LEFT JOIN `order_items` oi ON oi.order_id = o.id ".$where." ORDER BY o.id DESC";
 	$orderInfo = $db->get($db->query($sql));
 	return $orderInfo;
 }
@@ -501,13 +523,13 @@ function get_client_chat($order_id) {
 	return $result;
 }
 
-function add_chat_message($order_id = '',$user_to,$message = array('body' => '','MediaUrl' => ''),$sendable = TRUE) {
+function add_chat_message($order_id = '',$user_from,$user_to,$message = array('body' => '','MediaUrl' => ''),$sendable = TRUE) {
 	global $db,$app;
 	
 	$body = $db->realEscape($message['body']);
 	$MediaUrl = $db->realEscape($message['MediaUrl']);
 
-	$sql = "INSERT INTO `chat`(`order_id`,`user_to`,`message`,`mediaUrl`) VALUES('".$order_id."','".$user_to."','".$body."','".$MediaUrl."')";
+	$sql = "INSERT INTO `chat`(`order_id`,`user_to`,`user_from`,`message`,`mediaUrl`) VALUES('".$order_id."','".$user_to."', '".$user_from."','".$body."','".$MediaUrl."')";
 	$db->query($sql);
 }
 
@@ -524,7 +546,7 @@ function get_deliveryboy_details($limited = false,$offset = 0,$limit = 0,$search
 		global $db,$app;
 		$limitedSql = "";
 		//$where = "";
-		 $where = " WHERE 1=1";
+		 $where = " WHERE type=2";
 		if(!empty($searchWith)) {
 			$where.= " AND name LIKE '%".$searchWith."%'";
 		}
@@ -532,11 +554,22 @@ function get_deliveryboy_details($limited = false,$offset = 0,$limit = 0,$search
 			$limitedSql = " LIMIT ".$offset.",".$limit;
 		}
 
-		$sql = 'SELECT * FROM `deliveryboys` '.$where.' ORDER BY id DESC'.$limitedSql;
+		$sql = 'SELECT * FROM `users` '.$where.' ORDER BY id DESC'.$limitedSql;
 		
 		$result = $db->get($db->query($sql));
 		
 		return $result;
 }
 
+/* GEt user type */
+function getUserRole($userId) {
+	global $db,$app;
+	$sql = "SELECT type FROM `users` WHERE id=".$userId."";
+	$result = $db->getOne($db->query($sql));
+	if($result->type == 1) {
+		return 'admin';
+	} else {
+		return 'deliveryboy';
+	}
+}
 ?>

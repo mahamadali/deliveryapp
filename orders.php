@@ -25,6 +25,7 @@
 									<th>Order Items</th>
 									<th>Delivery Charge</th>
 									<th>Order placed time</th>
+									<th>Delivery Boy</th>
 									<th>Status</th>
 									<th>Processing</th>
 								</tr>
@@ -54,6 +55,7 @@
 											<td><a class='btn btn-sm btn-warning' target='_blank' href='".HOME_URL."assets/order_invoice_pdfs/".$order->order_no."'>View</a></td>
 											<td>".$order->delivery_charge." INR</td>
 											<td>".$order->created_at."</td>
+											<td>".(!empty(getDeliveryBoyInfo($order->deliveryboy_id)->name) ? getDeliveryBoyInfo($order->deliveryboy_id)->name : '-')."</td>
 											<td>
 											<select class='order_status' data-id='".$order->id."'>
 											<option ".$pSelected." value='P'>Pending</option>

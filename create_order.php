@@ -9,7 +9,6 @@
 		$app->setSession('message',$message);
 	}
 	$deliveryboy_details = get_deliveryboy_details(false,NULL,NULL,'');
-	dd($deliveryboy_details);
 ?>
 	<div class="content">
 		<div class="container-fluid">
@@ -62,8 +61,13 @@
 									<div class="col-md-12">
 										<div class="form-group">
 											<label>Select Delivery Boy</label>
-											<select class="form-control" name="delivery_boy" required="">
+											<select class="form-control border-input" name="delivery_boy" required="">
 												<option value="">Select Delivery Boy</option>
+												<?php
+												foreach ($deliveryboy_details as $key => $value) {
+													echo '<option value="'.$value->id.'">'.$value->name.'</option>';
+												}
+												?>
 											</select>
 										</div>
 									</div>

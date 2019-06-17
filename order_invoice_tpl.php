@@ -75,6 +75,9 @@
 					</td>
 				</tr>
 				<tr>
+					<td><b>Delivery Boy : </b>{{deliveryboy_id}}</td>
+				</tr>
+				<tr>
 					<td><h4>Order Items</h4></td>
 				</tr>
 				<tr>

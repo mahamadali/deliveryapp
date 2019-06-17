@@ -18,8 +18,13 @@
       'MediaUrl' => $mediaUrl
     );
 
-
-    add_chat_message($_GET['order_id'],$app->getSession('user_name'),$message);
+    if($app->getSession('loggedin') == 1) {
+      $receiver = getOrderInfoByOrderNo($_GET['order_id'])->deliveryboy_id;
+    }
+    else {
+      $receiver = 1;
+    }
+    add_chat_message($_GET['order_id'],$app->getSession('loggedin'), $receiver, $message);
     $message = json_encode(array('text' => 'Message has been successfully sent.','icon' => 'fa-check','type' => 'success'));
   }
 
@@ -35,7 +40,17 @@
             <div class="header">
               <div class="row">
                 <div class="col-sm-9">
-                  <h4 class="title">Chat (<?php echo get_order_username($_GET['order_id'],'bill_to') ?>)</h4>
+                  <h4 class="title">Chat (
+                    <?php
+                      if(getUserRole($app->getSession('loggedin')) == 'admin') {
+                        echo ucfirst(getDeliveryBoyInfo(getOrderInfoByOrderNo($_GET['order_id'])->deliveryboy_id)->name);  
+                      }
+                      else {
+                        echo ucfirst(get_admin_meta(1, 'name'));
+                      }
+                      
+                    ?>
+                  )</h4>
                <!--    <p class="category">Client chat</p> -->
                 </div>
               </div>
@@ -49,9 +64,9 @@
                   ?>
                   <div class="row">
                     <?php 
-                      $bubbleDirection = (!empty($messageInfo->sender_type) && $messageInfo->sender_type == 'admin')?'right':'left';
-                      $bubbleDirectionTop = (!empty($messageInfo->sender_type) && $messageInfo->sender_type == 'admin')?'right':'left';
-                      $sender = (!empty($messageInfo->sender_type) && $messageInfo->sender_type == 'admin')?'sender':'';
+                      $bubbleDirection = (!empty($messageInfo->user_from) && $messageInfo->user_from == $app->getSession('loggedin'))?'right':'left';
+                      $bubbleDirectionTop = (!empty($messageInfo->user_from) && $messageInfo->user_from == $app->getSession('loggedin'))?'right':'left';
+                      $sender = (!empty($messageInfo->user_from) && $messageInfo->user_from == $app->getSession('loggedin'))?'sender':'';
                     ?>
                     <div class="talk-bubble tri-right <?php echo $bubbleDirection; ?>-in <?php echo $sender; ?> chat-block col-md-6 ml-3 pull-<?php echo $bubbleDirection; ?>">
                         <div class="talktext">

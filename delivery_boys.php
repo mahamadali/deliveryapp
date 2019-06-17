@@ -56,6 +56,7 @@
 								<th>#</th>
 								<th>Name</th>
 								<th>Contact</th>
+								<th>Email</th>
 								<th>Action</th>
 							</thead>
 							<tbody>
@@ -81,6 +82,11 @@
 									<td>
 										<?php
 											echo $test_detail->contact;
+										?>
+									</td>
+									<td>
+										<?php
+											echo $test_detail->username;
 										?>
 									</td>
 									<td>
