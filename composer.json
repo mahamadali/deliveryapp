@@ -1,0 +1,6 @@
+{
+    "require": {
+        "twilio/sdk": "^5.28",
+        "dompdf/dompdf": "dev-master"
+    }
+}
