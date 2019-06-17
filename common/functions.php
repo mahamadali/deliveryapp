@@ -128,6 +128,7 @@ function addDeliveryBoy($request) {
 	$request = $db->realEscapeRequest($request);
 	$sql = "INSERT INTO `users`(`name`,`contact`,`username`,`password`,`type`) VALUES('".$request['delivery_boy_name']."','".$request['delivery_boy_contact_number']."','".$request['delivery_boy_email']."','".encrypt($request['delivery_boy_password'])."',2)";
 	$db->query($sql);
+	SystemLog($app->getSession('loggedin'), 0, "New Delivery Boy Added.");
 	return true;
 }
 /* Function to updatedelivery boy informaion*/
@@ -199,6 +200,7 @@ function generateOrder($orderInfo) {
 	$db->query($sql);
 	$orderInfo = getOrderInfo($latest_order_id);
 	generateOrderInvoice($latest_order_id, $order_no);
+	SystemLog($app->getSession('loggedin'), $latest_order_id, "Order No #".$order_no." created.");
 	return $orderInfo;
 }
 /* Function to get order info by order id */
@@ -488,7 +490,9 @@ function getOrders() {
 function changeOrderStatus($order_id, $status) {
 	global $db,$app;
 	$sql = "UPDATE `orders` SET `order_status` = '".$status."'  WHERE id=".$order_id;
-	$db->query($sql);
+	if($db->query($sql)) {
+		SystemLog($app->getSession('loggedin'), $order_id, "Order status changed to $status.");
+	}
 	return true;
 }
 
@@ -571,5 +575,12 @@ function getUserRole($userId) {
 	} else {
 		return 'deliveryboy';
 	}
+}
+
+/* Add System Log */
+function SystemLog($userId,$orderId,$msg) {
+	global $db,$app;
+	$sql = "INSERT INTO `deliveryboys_logs` (userid,orderid,message) VALUES (".$userId.", ".$orderId.", '".$msg."')";
+	$db->query($sql);
 }
 ?>
