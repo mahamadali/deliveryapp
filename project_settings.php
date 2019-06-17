@@ -21,6 +21,7 @@
 	define('RECORDS_PER_PAGE','10');
 	define('APP_LOGO_ALLOWED_EXTENSIONS','jpg,jpeg,gif,bmp,png');
 
+	/* Google Map related settings */
 	define('MAP_API_KEY','AIzaSyA7nBjT-cjlh-B_n-4ClAsgfJLF6v7InFA');
 
 	header('Access-Control-Allow-Origin: *');
