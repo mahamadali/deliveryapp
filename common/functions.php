@@ -209,20 +209,16 @@ function generateOrder($orderInfo) {
 	$mobileNo = $deliveryBoyInfo->contact;
 	$orderInvoicePDFFileName = "assets/order_invoice_pdfs/".$order_no.".pdf";
 
-	$msg = "Hello ".ucfirst($deliveryBoyName).PHP_EOL.PHP_EOL;
-	$msg .= "New order arrived from A2Z Delivery.".PHP_EOL.PHP_EOL;
-	$msg .= "Click here to check order details. ".HOME_URL.$orderInvoicePDFFileName.PHP_EOL.PHP_EOL;
-	$msg .= "Thanks,".PHP_EOL."A2Z Delivery Team.";
-
-	sendNotificationViaSms($mobileNo, $msg);
+	$deliveryBoySmsText = get_setting_meta('delivery_boy_sms');
+	$deliveryBoySmsText = str_replace("{{DELIVERYBOYNAME}}", ucfirst($deliveryBoyName), $deliveryBoySmsText);
+	$deliveryBoySmsText = str_replace("{{ORDER_LINK}}", HOME_URL.$orderInvoicePDFFileName, $deliveryBoySmsText);
+	sendNotificationViaSms($mobileNo, $deliveryBoySmsText);
 
 	//Send Notification to customer
-	$customerMsg = "Hello ".ucfirst($bill_to).PHP_EOL.PHP_EOL;
-	$customerMsg .= "New order received from you.".PHP_EOL.PHP_EOL;
-	$customerMsg .= "Click here to check order details. ".HOME_URL.$orderInvoicePDFFileName.PHP_EOL.PHP_EOL;
-	$customerMsg .= "Thanks,".PHP_EOL."A2Z Delivery Team.";
-
-	sendNotificationViaSms($customer_phone_number, $customerMsg);
+	$customerSmsText = get_setting_meta('customer_sms');
+	$customerSmsText = str_replace("{{CUSTOMERNAME}}", ucfirst($bill_to), $customerSmsText);
+	$customerSmsText = str_replace("{{ORDER_LINK}}", HOME_URL.$orderInvoicePDFFileName, $customerSmsText);
+	sendNotificationViaSms($customer_phone_number, $customerSmsText);
 
 	SystemLog($app->getSession('loggedin'), $latest_order_id, "Order No #".$order_no." created.");
 	return $orderInfo;
@@ -400,6 +396,10 @@ function updateSettings($request,$files = array()) {
 	$sql = "UPDATE `app_settings` SET `value` = '".$request['twilio_secret']."' WHERE name='twilio_secret'";
 	$db->query($sql);
 	$sql = "UPDATE `app_settings` SET `value` = '".$request['twilio_number']."' WHERE name='twilio_number'";
+	$db->query($sql);
+	$sql = "UPDATE `app_settings` SET `value` = '".$request['delivery_boy_sms']."' WHERE name='delivery_boy_sms'";
+	$db->query($sql);
+	$sql = "UPDATE `app_settings` SET `value` = '".$request['customer_sms']."' WHERE name='customer_sms'";
 	$db->query($sql);
 
 	return array('status' => 'success','msg' => 'Settings uploaded successfully.');

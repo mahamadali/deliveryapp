@@ -95,6 +95,24 @@ if(!empty($_POST['btnSubmitEditAppSettings'])) {
 									</div>
 								</div>
 							</div>
+
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Delivery Boy SMS Text</label>
+										<textarea rows="10" class="form-control border-input" name="delivery_boy_sms"><?php echo get_setting_meta('delivery_boy_sms'); ?></textarea>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Customer SMS Text</label>
+										<textarea rows="10" class="form-control border-input" name="customer_sms"><?php echo get_setting_meta('customer_sms'); ?></textarea>
+									</div>
+								</div>
+							</div>
 							
 							<div class="row">
 								<div class="col-md-3">
