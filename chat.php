@@ -96,7 +96,7 @@
               </div>
               <form method="post" action="" enctype="multipart/form-data">
                 <div class="row ml-1 mr-1">
-                  <div class="col-md-9">
+                  <div class="col-md-8">
                     <input type="text" autocomplete="off" name="message" class="form-control border-input" placeholder="Send Reply" />
                   </div>
                   <div class="col-md-1">
@@ -104,6 +104,9 @@
                       <input type="file" name="chat-attachment" id="chat-attachment" accept="image/*" />
                     </div>
                     <span class="chat-attachment-link" onclick="chooseFile();"><i class="ti-link"></i></span>
+                  </div>
+                  <div class="col-md-1 mr-1">
+                    <a href=<?php echo HOME_URL ?>signature.php?order_id=<?php echo $_GET["order_id"]; ?>  class="btn btn-success btn-fill border-input">Signature&nbsp;&nbsp;<i class="ti-arrow-circle-right"></i></a>
                   </div>
                   <div class="col-md-1 mr-1 pull-right">
                     <button type="submit" name="sendMsg" class="btn btn-success btn-fill border-input">Send&nbsp;&nbsp;<i class="ti-arrow-circle-right"></i></button>
