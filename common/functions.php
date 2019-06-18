@@ -212,9 +212,17 @@ function generateOrder($orderInfo) {
 	$msg = "Hello ".ucfirst($deliveryBoyName).PHP_EOL.PHP_EOL;
 	$msg .= "New order arrived from A2Z Delivery.".PHP_EOL.PHP_EOL;
 	$msg .= "Click here to check order details. ".HOME_URL.$orderInvoicePDFFileName.PHP_EOL.PHP_EOL;
-	$msg .= "Thanks,".PHP_EOL." A2Z Delivery Team.";
+	$msg .= "Thanks,".PHP_EOL."A2Z Delivery Team.";
 
-	sendNotificationToDeliveryBoy($mobileNo, $msg);
+	sendNotificationViaSms($mobileNo, $msg);
+
+	//Send Notification to customer
+	$customerMsg = "Hello ".ucfirst($bill_to).PHP_EOL.PHP_EOL;
+	$customerMsg .= "New order received from you.".PHP_EOL.PHP_EOL;
+	$customerMsg .= "Click here to check order details. ".HOME_URL.$orderInvoicePDFFileName.PHP_EOL.PHP_EOL;
+	$customerMsg .= "Thanks,".PHP_EOL."A2Z Delivery Team.";
+
+	sendNotificationViaSms($customer_phone_number, $customerMsg);
 
 	SystemLog($app->getSession('loggedin'), $latest_order_id, "Order No #".$order_no." created.");
 	return $orderInfo;
@@ -601,7 +609,7 @@ function SystemLog($userId,$orderId,$msg) {
 }
 
 /* Send Notification */
-function sendNotificationToDeliveryBoy($phone_number,$msg) {
+function sendNotificationViaSms($phone_number,$msg) {
 	$invite_sms_text = $msg;
 	$phone_number = str_replace(" ","",$phone_number);
 	$sid = get_setting_meta('twilio_key');
