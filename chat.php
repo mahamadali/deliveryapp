@@ -60,10 +60,10 @@
                   <?php
                   if(getUserRole($app->getSession('loggedin')) == 'admin') {
                     echo ucfirst(getDeliveryBoyInfo(getOrderInfoByOrderNo($_GET['order_id'])->deliveryboy_id)->name); 
-                  ?> ,
-                  <?php
-                     echo getDeliveryBoyInfo(getOrderInfoByOrderNo($_GET['order_id'])->deliveryboy_id)->contact;  
-                  }
+                  ?> , <a href="tel:+ <?php echo getDeliveryBoyInfo(getOrderInfoByOrderNo($_GET['order_id'])->deliveryboy_id)->contact; ?>"><?php echo getDeliveryBoyInfo(getOrderInfoByOrderNo($_GET['order_id'])->deliveryboy_id)->contact; ?></a>
+
+                  <?php 
+                   }
                   else {
                     echo get_admin_meta(1, 'contact');
                   }

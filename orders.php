@@ -3,7 +3,14 @@
 	if(empty($app->getSession('loggedin'))) {
 		$app->redirect('index.php');
 	}
-	$orders = getOrders();
+
+	if(!empty($_POST['order_no'])) {
+	   $order_id=$_POST['order_id'];
+	   $order_no=$_POST['order_no'];
+	   generateOrderInvoice($order_id,$order_no);
+	 }
+
+	 $orders = getOrders();
 ?>
 <div class="content">
 	<div class="container-fluid">
@@ -52,7 +59,13 @@
 											<td>".$order->order_no."</td>
 											<td>".$order->bill_to."</td>
 											<td>".$order->order_from." - ".$order->order_to."</td>
-											<td><a class='btn btn-sm btn-warning' target='_blank' href='".HOME_URL."assets/order_invoice_pdfs/".$order->order_no.".pdf'>View</a></td>
+											<td>
+												<form method='post'>
+												<input type='hidden' name='order_id' value='".$order->id."'>
+												<input type='hidden' name='order_no' value='".$order->order_no."'>
+												<button class='btn btn-sm btn-warning' name='btnOrderInvoice'>View</button>
+												</form>
+											</td>
 											<td>".$order->delivery_charge." INR</td>
 											<td>".$order->created_at."</td>
 											<td>".(!empty(getDeliveryBoyInfo($order->deliveryboy_id)->name) ? getDeliveryBoyInfo($order->deliveryboy_id)->name : '-')."</td>

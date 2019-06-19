@@ -45,14 +45,14 @@
                                 </a>
                             </li>
                         
-                            <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('create_order','edit_order','chat'))) { echo "active"; } ?>">
+                            <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('create_order','edit_order'))) { echo "active"; } ?>">
                                 <a href="create_order.php">
                                     <i class="fa fa-shopping-cart"></i>
                                     <p>Create Order</p>
                                 </a>
                             </li>
                         <?php endif ?>
-                        <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('orders'))) { echo "active"; } ?>">
+                        <li class="<?php if(showTabActive($_SERVER['REQUEST_URI'],array('orders','chat','signature'))) { echo "active"; } ?>">
                             <a href="orders.php">
                                 <i class="fa fa-list"></i>
                                 <p>Orders</p>

@@ -270,12 +270,16 @@ function buildOrderInvoiceInfo($order_invoice_tempalte,$order_info){
 	foreach ($order_info as $key => $value) {
 		if($key == 'deliveryboy_id') {
 			$delivery_boy_name = getDeliveryBoyInfo($value);
+
 			$order_invoice_tempalte = str_replace("{{".$key."}}", $delivery_boy_name->name, $order_invoice_tempalte);
+			$order_invoice_tempalte1 = str_replace("{{".$key."}}", $delivery_boy_name->contact, $order_invoice_tempalte);
 		}
 		else{
 			$order_invoice_tempalte = str_replace("{{".$key."}}", $value, $order_invoice_tempalte);
 		}
 	}
+	$deliveryboy_id=$order_info->deliveryboy_id;
+	$order_invoice_tempalte = str_replace("{{deliveryboy_contact}}",getContactFromId($deliveryboy_id),$order_invoice_tempalte);
 	$order_invoice_tempalte = str_replace("{{APP_LOGO}}","assets/img/logos/".get_setting_meta('logo'),$order_invoice_tempalte);
 	$order_invoice_tempalte = str_replace("{{APP_NAME}}",get_setting_meta('app_name'),$order_invoice_tempalte);
 	$order_invoice_tempalte = str_replace("{{APP_ADDRESS_LINE_1}}",get_setting_meta('app_address'),$order_invoice_tempalte);
@@ -306,7 +310,7 @@ function generateOrderInvoicePDF($order_invoice_built_content,$orderInvoicePDFFi
 	$output = $dompdf->output();
 	file_put_contents(__DIR__.'/../'.$orderInvoicePDFFileName, $output);
 // echo "<script>window.open('".HOME_URL.$orderInvoicePDFFileName."', '_blank');</script>";
-	echo '<script type="text/javascript" language="Javascript">window.open("'.HOME_URL.$orderInvoicePDFFileName.'");</script>';
+	echo '<script type="text/javascript" language="Javascript">window.open("'.HOME_URL.$orderInvoicePDFFileName.'", "_blank");</script>';
 }
 function sendSMS($p_id,$phone_number,$SURVEY_LINK) {
 	$invite_sms_text = get_setting_meta('invite_sms_text');
@@ -636,5 +640,13 @@ function getOrderId($order_no) {
 	$result = $db->query($sql);
 	$row = $db->getOne($result);
 	return $row->id;
+}
+function getContactFromId($id) {
+
+	global $db;
+	$sql = "SELECT contact FROM `users` WHERE id ='$id'";
+	$result = $db->query($sql);
+	$row = $db->getOne($result);
+	return $row->contact;
 }
 ?>

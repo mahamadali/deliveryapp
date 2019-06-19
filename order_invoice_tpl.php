@@ -75,7 +75,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><b>Delivery Boy : </b>{{deliveryboy_id}}</td>
+					<td><b>Delivery Boy : </b>{{deliveryboy_id}} ( <a href="tel:+ {{deliveryboy_contact}}">{{deliveryboy_contact}}</a>  )</td>
 				</tr>
 				<tr>
 					<td><h4>Order Items</h4></td>

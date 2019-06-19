@@ -88,7 +88,9 @@ $app->redirect('chat.php?order_id='.$_GET['order_id']);
 												<input type="hidden" name="hdnSignature" id="hdnSignature" />
 												<input type="button" id="btn_submit" class="btn btn-primary btn-fill" value="Upload Custemer Signature" />
 												<input type="button" class="btn btn-default" id="reset_btn" value="Reset" />
+												<a class='btn btn-danger pull-right' target='_blank' href="<?php echo HOME_URL ?>chat.php?order_id=<?php echo $_GET['order_id']; ?>">Back to chat</a>
 											</form>
+
 										</div>
 										<div id="tools"></div>
 										
