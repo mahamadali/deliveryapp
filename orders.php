@@ -52,7 +52,7 @@
 											<td>".$order->order_no."</td>
 											<td>".$order->bill_to."</td>
 											<td>".$order->order_from." - ".$order->order_to."</td>
-											<td><a class='btn btn-sm btn-warning' target='_blank' href='".HOME_URL."assets/order_invoice_pdfs/".$order->order_no."'>View</a></td>
+											<td><a class='btn btn-sm btn-warning' target='_blank' href='".HOME_URL."assets/order_invoice_pdfs/".$order->order_no.".pdf'>View</a></td>
 											<td>".$order->delivery_charge." INR</td>
 											<td>".$order->created_at."</td>
 											<td>".(!empty(getDeliveryBoyInfo($order->deliveryboy_id)->name) ? getDeliveryBoyInfo($order->deliveryboy_id)->name : '-')."</td>

@@ -18,9 +18,9 @@ function login($request) {
 	global $db;
 	$request = $db->realEscapeRequest($request);
 	$sql = "SELECT id from users WHERE username='".$request['username']."' AND password='".encrypt($request['password'])."'";
-	
+
 	if($db->numRows($db->query($sql)) > 0) {
-		
+
 		$_SESSION['user_name'] = $request['username'];
 		return $db->getOne($db->query($sql));
 	}
@@ -100,7 +100,7 @@ function get_users($limited = false,$offset = 0,$limit = 0,$searchWith = array()
 		$limitedSql = " LIMIT ".$offset.",".$limit;
 	}
 	$sql = 'SELECT * FROM `user`'.$where.' ORDER BY ID DESC'.$limitedSql;
-	
+
 	$result = $db->get($db->query($sql));
 	return $result;
 }
@@ -156,10 +156,10 @@ function getDeliveryBoyInfo($delivery_boy_id) {
 function generateOrder($orderInfo) {
 	global $db,$app;
 
-	//Get latlong
+//Get latlong
 	$latlongFrom = getLatLong($orderInfo['order_from']);
 	$latlongTo = getLatLong($orderInfo['order_to']);
-	//Get Distance
+//Get Distance
 	$kilometers = 0;
 	if(!empty($latlongFrom['lat'])) {
 		$distance = getDistanceBetweenPoints($latlongFrom['lat'], $latlongFrom['long'], $latlongTo['lat'], $latlongTo['long']);
@@ -184,7 +184,7 @@ function generateOrder($orderInfo) {
 	$order_to = $db->realEscape($orderInfo['order_to']);
 	$orderSpecialNote = $db->realEscape($orderInfo['orderSpecialNote']);
 	$delivery_boy = $db->realEscape($orderInfo['delivery_boy']);
-	
+
 
 	$orderItemNames = $db->realEscapeRequest($orderInfo['orderItemName']);
 	$orderItemQuantities = $db->realEscapeRequest($orderInfo['orderItemQuantity']);
@@ -203,7 +203,7 @@ function generateOrder($orderInfo) {
 	$orderInfo = getOrderInfo($latest_order_id);
 	generateOrderInvoice($latest_order_id, $order_no);
 
-	//Send Notification to delivery boy
+//Send Notification to delivery boy
 	$deliveryBoyInfo = getDeliveryBoyInfo($delivery_boy);
 	$deliveryBoyName = $deliveryBoyInfo->name;
 	$mobileNo = $deliveryBoyInfo->contact;
@@ -214,7 +214,7 @@ function generateOrder($orderInfo) {
 	$deliveryBoySmsText = str_replace("{{ORDER_LINK}}", HOME_URL.$orderInvoicePDFFileName, $deliveryBoySmsText);
 	sendNotificationViaSms($mobileNo, $deliveryBoySmsText);
 
-	//Send Notification to customer
+//Send Notification to customer
 	$customerSmsText = get_setting_meta('customer_sms');
 	$customerSmsText = str_replace("{{CUSTOMERNAME}}", ucfirst($bill_to), $customerSmsText);
 	$customerSmsText = str_replace("{{ORDER_LINK}}", HOME_URL.$orderInvoicePDFFileName, $customerSmsText);
@@ -285,27 +285,27 @@ function buildOrderInvoiceInfo($order_invoice_tempalte,$order_info){
 }
 /* Function to generate order invoice pdf */
 function generateOrderInvoicePDF($order_invoice_built_content,$orderInvoicePDFFileName) {
-	// $html2pdf = new Html2Pdf('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
-	// $html2pdf->setDefaultFont(null);
- //    $html2pdf->pdf->SetDisplayMode('fullpage');
- //    $html2pdf->writeHTML($order_invoice_built_content);
- //    $html2pdf->output(__DIR__.'/../'.$orderInvoicePDFFileName,'F');
+// $html2pdf = new Html2Pdf('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
+// $html2pdf->setDefaultFont(null);
+//    $html2pdf->pdf->SetDisplayMode('fullpage');
+//    $html2pdf->writeHTML($order_invoice_built_content);
+//    $html2pdf->output(__DIR__.'/../'.$orderInvoicePDFFileName,'F');
 
-    // instantiate and use the dompdf class
+// instantiate and use the dompdf class
 	$dompdf = new Dompdf();
 	$dompdf->loadHtml($order_invoice_built_content);
 
-	// (Optional) Setup the paper size and orientation
+// (Optional) Setup the paper size and orientation
 	$dompdf->setPaper('A4', 'portrait');
 
-	// Render the HTML as PDF
+// Render the HTML as PDF
 	$dompdf->render();
 
-	// Output the generated PDF to Browser
-	// $dompdf->stream();
+// Output the generated PDF to Browser
+// $dompdf->stream();
 	$output = $dompdf->output();
 	file_put_contents(__DIR__.'/../'.$orderInvoicePDFFileName, $output);
-	// echo "<script>window.open('".HOME_URL.$orderInvoicePDFFileName."', '_blank');</script>";
+// echo "<script>window.open('".HOME_URL.$orderInvoicePDFFileName."', '_blank');</script>";
 	echo '<script type="text/javascript" language="Javascript">window.open("'.HOME_URL.$orderInvoicePDFFileName.'");</script>';
 }
 function sendSMS($p_id,$phone_number,$SURVEY_LINK) {
@@ -459,21 +459,21 @@ function setQueryParamsForPagination($server_query_string) {
 }
 
 function getDistanceBetweenPoints($lat1, $lon1, $lat2, $lon2) {
-    $theta = $lon1 - $lon2;
-    $miles = (sin(deg2rad($lat1)) * sin(deg2rad($lat2))) + (cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)));
-    $miles = acos($miles);
-    $miles = rad2deg($miles);
-    $miles = $miles * 60 * 1.1515;
-    $feet = $miles * 5280;
-    $yards = $feet / 3;
-    $kilometers = $miles * 1.609344;
-    $meters = $kilometers * 1000;
-    return compact('miles','feet','yards','kilometers','meters'); 
+	$theta = $lon1 - $lon2;
+	$miles = (sin(deg2rad($lat1)) * sin(deg2rad($lat2))) + (cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)));
+	$miles = acos($miles);
+	$miles = rad2deg($miles);
+	$miles = $miles * 60 * 1.1515;
+	$feet = $miles * 5280;
+	$yards = $feet / 3;
+	$kilometers = $miles * 1.609344;
+	$meters = $kilometers * 1000;
+	return compact('miles','feet','yards','kilometers','meters'); 
 }
 
 function getLatLong($address) {
 	$url = "https://maps.google.com/maps/api/geocode/json?key=".MAP_API_KEY."&address=".urlencode($address);
-	
+
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);    
@@ -483,17 +483,17 @@ function getLatLong($address) {
 	$response = json_decode($responseJson);
 
 	if ($response->status == 'OK') {
-	    $latitude = $response->results[0]->geometry->location->lat;
-	    $longitude = $response->results[0]->geometry->location->lng;
-	    return array('status' => 'success', 'lat' => $latitude, 'long' => $longitude);
-	    // echo 'Latitude: ' . $latitude;
-	    // echo '<br />';
-	    // echo 'Longitude: ' . $longitude;
+		$latitude = $response->results[0]->geometry->location->lat;
+		$longitude = $response->results[0]->geometry->location->lng;
+		return array('status' => 'success', 'lat' => $latitude, 'long' => $longitude);
+    // echo 'Latitude: ' . $latitude;
+    // echo '<br />';
+    // echo 'Longitude: ' . $longitude;
 	}
 	else {
 		return array('status' => 'fail', 'lat' => 0, 'long' => 0);
-	    // echo $response->status;
-	    // var_dump($response);
+    // echo $response->status;
+    // var_dump($response);
 	}
 }
 
@@ -535,7 +535,7 @@ function uploadChatAttachment($files) {
 			return '';
 		}
 		else {
-			// return $protocol.$_SERVER['SERVER_NAME']."/".$destination_path;
+		// return $protocol.$_SERVER['SERVER_NAME']."/".$destination_path;
 			return $destination_path;
 		}
 	}
@@ -553,7 +553,7 @@ function get_client_chat($order_id) {
 
 function add_chat_message($order_id = '',$user_from,$user_to,$message = array('body' => '','MediaUrl' => ''),$sendable = TRUE) {
 	global $db,$app;
-	
+
 	$body = $db->realEscape($message['body']);
 	$MediaUrl = $db->realEscape($message['MediaUrl']);
 
@@ -571,22 +571,22 @@ function get_order_username($order_id, $field) {
 }
 
 function get_deliveryboy_details($limited = false,$offset = 0,$limit = 0,$searchWith = '') {
-		global $db,$app;
-		$limitedSql = "";
-		//$where = "";
-		 $where = " WHERE type=2";
-		if(!empty($searchWith)) {
-			$where.= " AND name LIKE '%".$searchWith."%'";
-		}
-		if($limited) {
-			$limitedSql = " LIMIT ".$offset.",".$limit;
-		}
+	global $db,$app;
+	$limitedSql = "";
+	//$where = "";
+	$where = " WHERE type=2";
+	if(!empty($searchWith)) {
+		$where.= " AND name LIKE '%".$searchWith."%'";
+	}
+	if($limited) {
+		$limitedSql = " LIMIT ".$offset.",".$limit;
+	}
 
-		$sql = 'SELECT * FROM `users` '.$where.' ORDER BY id DESC'.$limitedSql;
-		
-		$result = $db->get($db->query($sql));
-		
-		return $result;
+	$sql = 'SELECT * FROM `users` '.$where.' ORDER BY id DESC'.$limitedSql;
+
+	$result = $db->get($db->query($sql));
+
+	return $result;
 }
 
 /* GEt user type */
@@ -603,8 +603,10 @@ function getUserRole($userId) {
 
 /* Add System Log */
 function SystemLog($userId,$orderId,$msg) {
+
 	global $db,$app;
 	$sql = "INSERT INTO `deliveryboys_logs` (userid,orderid,message) VALUES (".$userId.", ".$orderId.", '".$msg."')";
+
 	$db->query($sql);
 }
 
@@ -625,5 +627,14 @@ function sendNotificationViaSms($phone_number,$msg) {
 	catch(Exception $e) {
 		return false;
 	}
+}
+
+function getOrderId($order_no) {
+
+	global $db;
+	$sql = "SELECT id FROM `orders` WHERE order_no ='$order_no'";
+	$result = $db->query($sql);
+	$row = $db->getOne($result);
+	return $row->id;
 }
 ?>
